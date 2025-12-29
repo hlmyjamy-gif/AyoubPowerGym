@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+    <title>AYOUB POWER AI | النسخة الملكية</title>  
+    <script src="https://cdn.tailwindcss.com"></script>  
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Oswald:wght@700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">  
+    <script src="https://unpkg.com/lucide@latest"></script>  
+    <style>  
+        :root { --primary: #f97316; --bg: #020202; }  
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: white; overflow-x: hidden; }  
+        .oswald { font-family: 'Oswald', sans-serif; }  
+        .orbitron { font-family: 'Orbitron', sans-serif; }  
+        .glass { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }  
+        .tab-content { display: none; }  
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }  
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }  
+        .glow-text { text-shadow: 0 0 15px rgba(249, 115, 22, 0.5); }  
+        .shimmer { background: linear-gradient(90deg, #111, #222, #111); background-size: 200% 100%; animation: shimmer 2s infinite linear; }  
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }  
+    </style>  
+</head>  
+<body class="pb-28">  <!-- شاشة الدخول -->  
+<div id="login-screen" class="fixed inset-0 z-[1000] bg-black flex flex-col items-center justify-center p-8">  
+    <div id="live-clock-login" class="orbitron text-orange-500 text-2xl font-bold mb-10 tracking-[0.3em] glow-text">00:00:00</div>  
+    <div class="w-20 h-20 bg-orange-500 rounded-[1.5rem] flex items-center justify-center shadow-[0_0_60px_rgba(249,115,22,0.3)] mb-6">  
+        <i data-lucide="shield-check" class="w-10 h-10 text-black"></i>  
+    </div>  
+    <h1 class="oswald text-4xl font-black italic mb-12 tracking-tighter">COMMANDER <span class="text-orange-500">AYOUB</span></h1>  
+    <div class="w-full max-w-sm space-y-4">  
+        <input id="login-otp" type="password" placeholder="أدخل شيفرة العبور" class="w-full bg-neutral-900 border-2 border-neutral-800 rounded-2xl p-5 text-center text-xl font-bold focus:border-orange-500 outline-none transition-all">  
+        <button onclick="checkLogin()" class="w-full bg-orange-500 text-black oswald text-xl py-5 rounded-2xl font-black shadow-xl hover:bg-orange-400 active:scale-95 transition-all">فتح النظام</button>  
+    </div>  
+</div>  
+
+<!-- التطبيق الرئيسي -->  
+<div id="main-app" class="hidden">  
+    <header class="sticky top-0 z-[100] glass px-6 py-4 flex justify-between items-center border-b border-orange-500/10">  
+        <div class="flex flex-col">  
+            <span id="live-clock-main" class="orbitron text-orange-500 text-lg font-bold glow-text leading-none">00:00:00</span>  
+            <span class="text-[8px] text-neutral-500 font-bold uppercase tracking-[0.2em]">Real-time Sync</span>  
+        </div>  
+        <div class="flex items-center gap-3">  
+            <div id="vip-status-indicator" class="w-2 h-2 rounded-full bg-neutral-700"></div>  
+            <h2 class="oswald text-lg italic tracking-tighter">AYOUB <span class="text-orange-500 text-sm">PRO</span></h2>  
+        </div>  
+    </header>  
+
+    <main class="p-6 max-w-2xl mx-auto space-y-6">  
+          
+        <!-- قسم النصائح المتحولة (50,000 تركيب محتمل) -->  
+        <div id="tip-container" class="bg-neutral-900/50 border border-white/5 p-6 rounded-[2rem] relative overflow-hidden group">  
+            <div class="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>  
+            <p id="dynamic-tip" class="text-sm font-bold italic text-neutral-300 leading-relaxed min-h-[40px]">جاري استدعاء حكمة المحارب...</p>  
+            <div class="mt-4 flex justify-between items-center">  
+                <span class="text-[8px] font-black text-orange-500/50 uppercase tracking-[0.3em]">Motivation Core</span>  
+                <button onclick="refreshTip()" class="text-neutral-600 hover:text-orange-500 transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>  
+            </div>  
+        </div>  
+
+        <!-- الرئيسية: مركز المعلومات -->  
+        <div id="home" class="tab-content active space-y-6">  
+            <div class="grid grid-cols-2 gap-4">  
+                <div class="bg-neutral-900 p-6 rounded-3xl border border-white/5 relative overflow-hidden">  
+                    <i data-lucide="activity" class="text-orange-500 mb-2 opacity-50"></i>  
+                    <p id="stat-bmi" class="oswald text-4xl font-black">--</p>  
+                    <p class="text-[9px] font-black text-neutral-500 uppercase mt-1 tracking-widest">BMI Index</p>  
+                </div>  
+                <div class="bg-neutral-900 p-6 rounded-3xl border border-white/5 relative overflow-hidden">  
+                    <i data-lucide="zap" class="text-orange-500 mb-2 opacity-50"></i>  
+                    <p id="stat-cals" class="oswald text-4xl font-black">--</p>  
+                    <p class="text-[9px] font-black text-neutral-500 uppercase mt-1 tracking-widest">Daily Burn</p>  
+                </div>  
+            </div>  
+
+            <div class="bg-neutral-900 p-8 rounded-[2.5rem] border border-white/5 space-y-6">  
+                <h3 class="oswald text-xl italic font-black text-orange-500 flex items-center gap-2">  
+                    <i data-lucide="user"></i> BIOMETRIC DATA  
+                </h3>  
+                <div class="grid grid-cols-2 gap-4">  
+                    <div class="space-y-1">  
+                        <label class="text-[9px] font-black text-neutral-600 uppercase pr-2">الوزن (KG)</label>  
+                        <input type="number" id="w-input" value="80" oninput="updateStats()" class="w-full bg-black border border-neutral-800 rounded-xl p-4 text-center font-black focus:border-orange-500 outline-none">  
+                    </div>  
+                    <div class="space-y-1">  
+                        <label class="text-[9px] font-black text-neutral-600 uppercase pr-2">الطول (CM)</label>  
+                        <input type="number" id="h-input" value="180" oninput="updateStats()" class="w-full bg-black border border-neutral-800 rounded-xl p-4 text-center font-black focus:border-orange-500 outline-none">  
+                    </div>  
+                </div>  
+            </div>  
+        </div>  
+
+        <!-- التمارين -->  
+        <div id="exercises" class="tab-content space-y-4">  
+            <h2 class="text-2xl font-black italic mb-6">قاعدة بيانات التمارين</h2>  
+            <div id="muscle-groups" class="space-y-3"></div>  
+        </div>  
+
+        <!-- مركز الذكاء الاصطناعي (مكان واحد شامل) -->  
+        <div id="ai-hub" class="tab-content h-[calc(100vh-250px)] flex flex-col">  
+            <div class="flex-1 bg-neutral-900 rounded-[2.5rem] border border-white/5 flex flex-col overflow-hidden shadow-2xl">  
+                <div class="p-6 border-b border-white/5 bg-gradient-to-r from-orange-500/10 to-transparent flex justify-between items-center">  
+                    <div class="flex items-center gap-4">  
+                        <div class="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center animate-pulse shadow-[0_0_20px_rgba(249,115,22,0.3)]">  
+                            <i data-lucide="brain-circuit" class="text-black"></i>  
+                        </div>  
+                        <div>  
+                            <h3 class="oswald text-xl italic font-black">AI COMMAND CENTER</h3>  
+                            <p class="text-[9px] text-green-500 font-bold uppercase tracking-widest">Global Intelligence Active</p>  
+                        </div>  
+                    </div>  
+                    <button onclick="triggerVip()" class="bg-black/50 p-3 rounded-xl border border-orange-500/20 text-orange-500 hover:bg-orange-500 hover:text-black transition-all">  
+                        <i data-lucide="crown" class="w-5 h-5"></i>  
+                    </button>  
+                </div>  
+
+                <div id="ai-messages" class="flex-1 overflow-y-auto p-6 space-y-4">  
+                    <div class="flex justify-start">  
+                        <div class="max-w-[85%] bg-neutral-800 p-5 rounded-2xl rounded-tl-none font-bold text-sm leading-relaxed border border-white/5">  
+                            أهلاً بك في مركز القيادة. أنا المدرب الرقمي "أيوب".   
+                            <br><br>  
+                            يمكنني الآن:<br>  
+                            1. الإجابة على استفسارات التدريب.<br>  
+                            2. تحليل بياناتك الحيوية.<br>  
+                            3. توليد خطط VIP كاملة (عند فتح القفل).  
+                        </div>  
+                    </div>  
+                </div>  
+
+                <div class="p-4 bg-black/60 flex gap-2 border-t border-white/5">  
+                    <input id="ai-input" class="flex-1 bg-neutral-800 rounded-2xl px-6 py-4 outline-none font-bold text-sm focus:ring-2 ring-orange-500/50" placeholder="اسأل أيوب عن أي شيء...">  
+                    <button onclick="askAI()" id="ai-send-btn" class="w-14 h-14 bg-orange-500 text-black rounded-2xl flex items-center justify-center transition-all active:scale-90 shadow-lg shadow-orange-500/20">  
+                        <i data-lucide="send"></i>  
+                    </button>  
+                </div>  
+            </div>  
+        </div>  
+
+    </main>  
+
+    <!-- نافذة VIP -->  
+    <div id="vip-lock" class="fixed inset-0 z-[500] bg-black/95 backdrop-blur-xl flex items-center justify-center p-8 hidden">  
+        <div class="w-full max-w-sm bg-neutral-900 border border-orange-500/30 p-10 rounded-[3rem] text-center">  
+            <div class="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-orange-500/20">  
+                <i data-lucide="lock" class="text-orange-500 w-8 h-8"></i>  
+            </div>  
+            <h2 class="oswald text-3xl italic font-black mb-8 tracking-tighter uppercase">VIP AUTHORIZATION</h2>  
+            <input id="vip-code" type="text" placeholder="رمز الوصول السري" class="w-full bg-black border border-neutral-800 rounded-2xl p-5 text-center font-black text-xl mb-6 focus:border-orange-500 outline-none text-orange-500">  
+            <div class="flex gap-3">  
+                <button onclick="verifyVip()" class="flex-1 bg-orange-500 text-black font-black py-5 rounded-2xl active:scale-95 transition-all">تحقق</button>  
+                <button onclick="hideVip()" class="flex-1 bg-neutral-800 text-white font-black py-5 rounded-2xl active:scale-95">إلغاء</button>  
+            </div>  
+        </div>  
+    </div>  
+
+    <!-- البار السفلي -->  
+    <nav class="fixed bottom-6 left-6 right-6 z-[200] glass rounded-[2.5rem] p-3 flex justify-around items-center shadow-2xl border border-white/5">  
+        <button onclick="switchTab('home')" class="nav-btn p-4 rounded-2xl text-orange-500 bg-orange-500/10"><i data-lucide="home"></i></button>  
+        <button onclick="switchTab('exercises')" class="nav-btn p-4 rounded-2xl text-neutral-500"><i data-lucide="dumbbell"></i></button>  
+        <button onclick="switchTab('ai-hub')" class="nav-btn p-4 rounded-2xl text-neutral-500"><i data-lucide="bot"></i></button>  
+    </nav>  
+</div>  
+
+<script>  
+    const PIN = "20090125";  
+    const VIP_PIN = "ayouub._.officiel";  
+    let hasVip = false;  
+
+    // مصفوفات لبناء 50,000 نصيحة وشعر حماسي  
+    const quotes = {  
+        pre: ["يا وحش،", "تذكر دائماً،", "لا تنسى أن", "القوة تكمن في أن", "النجاح هو أن", "البطل الحقيقي", "إذا أردت العظمة،"],  
+        mid: ["الاستمرار هو السر،", "الألم مؤقت لكن المجد أبدي،", "عضلاتك تُبنى بالصبر قبل الحديد،", "كل تكرار تقترب فيه من حلمك،", "لا تنظر للخلف أبداً،", "الحديد لا يكذب،", "العرق هو دم التضحية،"],  
+        post: ["فلا تتوقف الآن!", "استمر حتى يراك الجميع قدوة.", "أنت أقوى مما تظن.", "العالم ينتظر نسختك الأفضل.", "اليوم صعب، غداً سيكون أسهل.", "قاتل من أجل حلمك.", "تجاوز حدودك كل يوم."],  
+        poems: [  
+            "الخَيْلُ وَاللّيْلُ وَالبَيْداءُ تَعرِفُني... وَالسّيفُ وَالرّمحُ وَالقِرْطاسُ وَالقَلَمُ",  
+            "عَلى قَدْرِ أَهْلِ العَزْمِ تَأْتِي العَزائِمُ... وَتأتي علَى قَدْرِ الكِرامِ المَكارِمُ",  
+            "إذا كُنتَ ذا رَأيٍ فَكُن ذا عَزيمَةٍ... فإنَّ فَسادَ الرَّأيِ أَن تَتَرَدَّدا",  
+            "وَمَنْ يتهيب صعود الجبال... يعش أبد الدهر بين الحفر",  
+            "فَلا تَقنَع بِمَا دونَ النُجومِ... فَإِنَّ المَجدَ لا يَرضى بِمَا دونَ النُجومِ"  
+        ]  
+    };  
+
+    const workouts = [  
+        { name: "الصدر", icon: "shield", list: ["بنش مستوي بار", "دمبل مائل علوي", "تفتيح كيبل", "غطس وزن الجسم", "ضغط صدر جهاز", "تجميع دمبل سفلي"] },  
+        { name: "الظهر", icon: "layers", list: ["سحب بار واسع", "عقلة قبضة واسعة", "سحب أرضي ضيق", "منشار دمبل", "رفرفة خلفية", "سحب لات أمامي"] },  
+        { name: "الأكتاف", icon: "layout-template", list: ["ضغط عسكري بار", "رفرفة جانبي", "رفرفة أمامي", "فراشة خلفي", "هز أكتاف", "ضغط دمبل جالس"] },  
+        { name: "الأرجل", icon: "layout-grid", list: ["سكوات حر", "دفع جهاز", "رفرفة أمامي", "مرجحة خلفي", "لونجز دمبل", "سمانة واقف"] },  
+        { name: "الباي", icon: "armchair", list: ["مرجحة بار Z", "تبادل دمبل", "مطرقة دمبل", "كيبل مسطرة", "ارتكاز منجزة", "بار عكسي"] },  
+        { name: "التراي", icon: "zap", list: ["دفع كيبل", "تراي خلف الرأس", "ضغط فرنسي", "غطس بنش", "حبل لأسفل", "ركلة خلفية"] },  
+        { name: "السواعد", icon: "maximize", list: ["مرجحة معصم", "مرجحة عكسية", "لف حبل", "تعليق عقلة", "مشية مزارع", "قبضة زنبرك"] }  
+    ];  
+
+    window.onload = () => {  
+        lucide.createIcons();  
+        initClock();  
+        renderWorkouts();  
+        updateStats();  
+        refreshTip();  
+        setInterval(refreshTip, 10000); // تغيير النصيحة كل 10 ثوانٍ  
+    };  
+
+    function initClock() {  
+        const update = () => {  
+            const now = new Date();  
+            const timeStr = now.toTimeString().split(' ')[0];  
+            document.getElementById('live-clock-login').innerText = timeStr;  
+            document.getElementById('live-clock-main').innerText = timeStr;  
+        };  
+        setInterval(update, 1000);  
+        update();  
+    }  
+
+    function refreshTip() {  
+        const isPoem = Math.random() > 0.7;  
+        let text = "";  
+        if(isPoem) {  
+            text = quotes.poems[Math.floor(Math.random() * quotes.poems.length)];  
+        } else {  
+            const p1 = quotes.pre[Math.floor(Math.random() * quotes.pre.length)];  
+            const p2 = quotes.mid[Math.floor(Math.random() * quotes.mid.length)];  
+            const p3 = quotes.post[Math.floor(Math.random() * quotes.post.length)];  
+            text = `${p1} ${p2} ${p3}`;  
+        }  
+        const el = document.getElementById('dynamic-tip');  
+        el.style.opacity = 0;  
+        setTimeout(() => {  
+            el.innerText = text;  
+            el.style.opacity = 1;  
+        }, 300);  
+    }  
+
+    function checkLogin() {  
+        if(document.getElementById('login-otp').value === PIN) {  
+            document.getElementById('login-screen').classList.add('hidden');  
+            document.getElementById('main-app').classList.remove('hidden');  
+        } else { alert("الرمز غير صحيح!"); }  
+    }  
+
+    function switchTab(id) {  
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));  
+        document.getElementById(id).classList.add('active');  
+        document.querySelectorAll('.nav-btn').forEach(btn => {  
+            btn.classList.remove('text-orange-500', 'bg-orange-500/10');  
+            btn.classList.add('text-neutral-500');  
+        });  
+        event.currentTarget.classList.add('text-orange-500', 'bg-orange-500/10');  
+        lucide.createIcons();  
+    }  
+
+    function renderWorkouts() {  
+        const container = document.getElementById('muscle-groups');  
+        container.innerHTML = workouts.map((w, i) => `  
+            <div class="bg-neutral-900 rounded-3xl border border-white/5 overflow-hidden">  
+                <button onclick="toggleWorkout(${i})" class="w-full p-6 flex justify-between items-center">  
+                    <div class="flex items-center gap-3">  
+                        <i data-lucide="${w.icon}" class="text-orange-500"></i>  
+                        <span class="font-black italic uppercase">${w.name}</span>  
+                    </div>  
+                    <i data-lucide="chevron-down" id="arrow-${i}" class="transition-transform"></i>  
+                </button>  
+                <div id="list-${i}" class="hidden p-6 pt-0 space-y-2">  
+                    ${w.list.map(ex => `<div class="p-3 bg-black/40 rounded-xl text-xs font-bold text-neutral-400">• ${ex}</div>`).join('')}  
+                </div>  
+            </div>  
+        `).join('');  
+        lucide.createIcons();  
+    }  
+
+    function toggleWorkout(i) {  
+        const el = document.getElementById('list-'+i);  
+        const arr = document.getElementById('arrow-'+i);  
+        const isH = el.classList.contains('hidden');  
+        el.classList.toggle('hidden', !isH);  
+        arr.style.transform = isH ? 'rotate(180deg)' : 'rotate(0deg)';  
+    }  
+
+    function updateStats() {  
+        const w = document.getElementById('w-input').value;  
+        const h = document.getElementById('h-input').value;  
+        if(w && h) {  
+            document.getElementById('stat-bmi').innerText = (w / ((h/100)**2)).toFixed(1);  
+            document.getElementById('stat-cals').innerText = Math.round((10*w + 6.25*h - 5*22 + 5) * 1.5);  
+        }  
+    }  
+
+    // الذكاء الاصطناعي المركزي  
+    async function fetchAI(prompt) {  
+        const apiKey = "AIzaSyCKpnR_HhoG9je8hj4PKLcIfOtQqT5BSbI"; // API Key يتم التعامل معه في بيئة العرض  
+        try {  
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {  
+                method: 'POST',  
+                headers: { 'Content-Type': 'application/json' },  
+                body: JSON.stringify({  
+                    contents: [{ parts: [{ text: `أنت المدرب أيوب، تتحدث بلهجة قوية ومحفزة وعلمية. أجب باختصار باللغة العربية: ${prompt}` }] }]  
+                })  
+            });  
+            const data = await response.json();  
+            return data.candidates[0].content.parts[0].text;  
+        } catch (e) { return "يا بطل، تعذر الاتصال بالخادم. حاول لاحقاً!"; }  
+    }  
+
+    async function askAI() {  
+        const inp = document.getElementById('ai-input');  
+        const box = document.getElementById('ai-messages');  
+        const btn = document.getElementById('ai-send-btn');  
+        if(!inp.value.trim()) return;  
+
+        const userText = inp.value;  
+        inp.value = "";  
+        box.innerHTML += `<div class="flex justify-end"><div class="max-w-[85%] bg-orange-500 text-black p-4 rounded-2xl rounded-tr-none font-bold text-sm">${userText}</div></div>`;  
+        box.scrollTop = box.scrollHeight;  
+
+        btn.disabled = true;  
+        btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin"></i>`;  
+        lucide.createIcons();  
+
+        const aiRes = await fetchAI(userText);  
+          
+        btn.disabled = false;  
+        btn.innerHTML = `<i data-lucide="send"></i>`;  
+        box.innerHTML += `<div class="flex justify-start"><div class="max-w-[85%] bg-neutral-800 p-4 rounded-2xl rounded-tl-none font-bold text-sm border border-white/5">${aiRes}</div></div>`;  
+        box.scrollTop = box.scrollHeight;  
+        lucide.createIcons();  
+    }  
+
+    function triggerVip() {  
+        if(hasVip) {  
+            box = document.getElementById('ai-messages');  
+            box.innerHTML += `<div class="flex justify-start"><div class="max-w-[85%] bg-orange-500/10 border border-orange-500/30 p-4 rounded-2xl font-bold text-sm text-orange-500 italic">نظام الـ VIP نشط. أنا بانتظار أوامرك لتحليل بياناتك بالكامل.</div></div>`;  
+        } else {  
+            document.getElementById('vip-lock').classList.remove('hidden');  
+        }  
+    }  
+
+    function hideVip() { document.getElementById('vip-lock').classList.add('hidden'); }  
+
+    function verifyVip() {  
+        if(document.getElementById('vip-code').value === VIP_PIN) {  
+            hasVip = true;  
+            hideVip();  
+            document.getElementById('vip-status-indicator').classList.remove('bg-neutral-700');  
+            document.getElementById('vip-status-indicator').classList.add('bg-orange-500', 'animate-pulse');  
+            alert("تم تفعيل بروتوكول VIP بنجاح!");  
+        } else { alert("رمز خاطئ!"); }  
+    }  
+</script>
+
+</body>  
+</html>  
